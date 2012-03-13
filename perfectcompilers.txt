@@ -62,3 +62,25 @@ Q1 : (S -> num) -> (S -> R -> num) -> (S -> R -> I -> num) -> num
 hence:
 Q : C -> num
 Q c = Q1 (\s. |c s|) (\s r. Cm c r s) (\s r. Tm r (c s))
+
+Should look at what laws Q (and Q1) would have to obey for this to make sense.
+We want Q to induce some order structure on compilers, probably pre- or partial-.
+Given Q, a perfect compiler is one that maximises Q.
+So would need the partial order to have a maximal element for a perfect compiler to exist.
+Should check that a perfect compiler so defined produces perfect compilations.
+
+Examples.
+1. addition without variables
+S = T = natural numbers and addition = data exp = Const of nat | Add of exp => exp
+V = natural numbers.
+I = unit
+SSem = TSem = fix (\f e. case e of Const n => n | Add e1 e2 => f e1 + f e2)
+|Const n| = 1
+|Add e1 e2| = |e1| + |e2| + 1
+R =
+...
+Since there are no variables or functions, the semantics of each source program is just a specific number. So a perfect compilation must be that number as a constant.
+Compilation by evaluation achieves perfection here, although the evaluation strategy may affect the compiler resource usage.
+To define Crm properly, would need to fix a language for specifying compilers and a resource-tracking semantics for it.
+
+2. addition with variables
