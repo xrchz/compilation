@@ -1,0 +1,62 @@
+Perfect Compilers
+
+Compiler writing is an art.
+It is not so much a black art as before: established methods and ideas are codified in textbooks and routinely taught in classrooms.
+But a compiler writer spends much effort weighing tradeoffs and tweaking heuristics.
+What is the aim?
+There are nowadays even verified compilers.
+What is such a compiler verified to do?
+A compiler is a program that translates code in one language, the source, into code in another, the target.
+A verified compiler is typically shown to preserve semantics: the meaning of the target program is the same as the meaning of the source program.
+The meaning of a program is typically the result of running that program on an interpreter/machine (and this can be modelled mathematically).
+(Although how do you deal with input required during running?)
+But writing a semantically transparent compiler, difficult as that may be (especially to prove that it is so), is only the beginning.
+Can one semantically transparent compiler be better than another?
+Yes, depending on what you care about.
+And people typically care about some of these:
+  - compilation resource usage
+  - target code size
+  - target code resource usage
+  where resources may include: time and memory
+In all cases, lower is typically better.
+Compilers perform optimisations to attempt to decrease the measures above, and since different programs (or the same programs with different inputs) respond to optimisations differently, and since decreasing one measure sometimes comes at the expense of increasing another, optimisations must often be guided by heuristics.
+
+But can we formally define a perfect compiler?
+
+What do we need to do so?
+Source language: S
+Target language: T
+Compilers: C : S -> T
+(Target) Inputs: I
+Results (possibly behaviors): V
+Semantics of source language: SSem : S -> V
+Semantics of target language: TSem : T -> V
+Target language size measure: | | : T -> num
+Runtime resources: R
+Compiler resource measure: Cm : C -> R -> S -> num
+Target language resource measure: Tm : R -> T -> I -> num
+
+Then a perfect compilation, t, of s in S would satisfy:
+- SSem s = TSem t
+- !t'. (SSem s = Tsem t') ==> |t| <= |t'|
+- !t'. (SSem s = Tsem t') ==> !r i. Tm r t i <= Tm r t' i
+We write Perfect1(s,t) for the conjunction of these conditions.
+But of course, no perfect compilation may exist!
+In the same, impossible, vein, a perfect compiler would be a compiler, c, satisfying:
+- !s. Perfect1(s, c s)
+- !c'. (!s. Perfect1(s, c' s)) ==> !r s. Cm c R s <= Cm c' R s
+Note the similary to the definition of a join in a partial order.
+
+The above is a simplistic ideal.
+Given that there may be unresolvable tradeoffs between the different parameters we want to optimize, what would be a more useful ideal?
+One option is to impose a partial order on compilations by abstracting a measure of quality that collapses the output size, compiler performance, and output performance down to a single number:
+Q0 : num -> (R -> num) -> (R -> I -> num) -> num
+Then for a given source program s, a compilation t1 = c1 s is better than another compilation t2 = c2 s (t1 >= t2) if:
+- (Tsem t1 = Ssem s) and (Tsem t2 <> Ssem s), or (Tsem t1 = Ssem s) and (Tsem t2 = Ssem s) and
+- Q0 |t1| (\r. Cm c1 r s) (\r. Tm r t1) <= Q0 |t2| (\r. Cm c2 r s) (\r. Tm r t2)
+This allows one to encode priorities and specific requirements (e.g. if you care a lot about output performance but not so much about compiler performance).
+
+We can extend this to a quality measure on compilers by adding the source program as an argument (since you might care about compiling some programs well more than others):
+Q1 : S -> (T -> num) -> (R -> num) -> (R -> I -> num) -> num
+Q : C -> num
+Q c = Q1 (c 
