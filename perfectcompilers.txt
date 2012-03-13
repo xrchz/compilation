@@ -20,6 +20,7 @@ And people typically care about some of these:
   where resources may include: time and memory
 In all cases, lower is typically better.
 Compilers perform optimisations to attempt to decrease the measures above, and since different programs (or the same programs with different inputs) respond to optimisations differently, and since decreasing one measure sometimes comes at the expense of increasing another, optimisations must often be guided by heuristics.
+Compilers are consequently compared by benchmarking rather than formal analysis.
 
 But can we formally define a perfect compiler?
 
@@ -57,6 +58,7 @@ Then for a given source program s, a compilation t1 = c1 s is better than anothe
 This allows one to encode priorities and specific requirements (e.g. if you care a lot about output performance but not so much about compiler performance).
 
 We can extend this to a quality measure on compilers by adding the source program as an argument (since you might care about compiling some programs well more than others):
-Q1 : S -> (T -> num) -> (R -> num) -> (R -> I -> num) -> num
+Q1 : (S -> num) -> (S -> R -> num) -> (S -> R -> I -> num) -> num
+hence:
 Q : C -> num
-Q c = Q1 (c 
+Q c = Q1 (\s. |c s|) (\s r. Cm c r s) (\s r. Tm r (c s))
