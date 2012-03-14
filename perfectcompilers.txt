@@ -127,3 +127,8 @@ What about perfect (i.e. fastest) strategies for reducing an expression to such 
 ...
 
 abstraction
+
+Note: this is doomed to failure.
+See http://en.wikipedia.org/wiki/Compiler_optimization#Problems_with_optimization
+and
+http://en.wikipedia.org/wiki/Full_employment_theorem
